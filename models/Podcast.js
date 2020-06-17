@@ -18,7 +18,12 @@ const PodcastSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    duration: Number
+    duration: Number,
+
+    sources: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Source'
+    }]
 }, {
     timestamps: true
 });

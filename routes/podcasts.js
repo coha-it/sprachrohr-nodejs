@@ -4,19 +4,25 @@ var router = express.Router();
 
 // Models
 var Podcast = require('../models/Podcast');
+var Source = require('../models/Source');
 
 // Create Todo
 router.post('/create', (req, res) => {
-  if (req.body.password === 'tmppass4215') {
-    var podcast = new Podcast(req.body);
-    podcast.save().then( podcast => {
-      res.status(200).json({'message': 'Podcast successfully added '});
-    })
-    .catch(err => {
-      res.status(400).json({'message': 'Error when saving to database'});
-    });
+  if (req.body.password !== 'tmppass4215') {
+    res.status(404).json('no');
   } else {
-    res.status(404).json('no')
+    var podcast = new Podcast(req.body);
+    podcast
+      .save()
+      .then( () => {
+        res.status(200).json({'message': 'Podcast successfully added '});
+      })
+      .catch((err) => {
+        res.status(400).json({
+          'message': 'Error when saving to database',
+          'details': err
+        });
+      });
   }
 });
 
