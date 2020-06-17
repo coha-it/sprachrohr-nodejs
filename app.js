@@ -4,16 +4,25 @@ var cors = require('cors')
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+// Connect Mongoose Mongo DB 
+mongoose
+.connect("mongodb://localhost:27017/podcast", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(
+  () => { console.log('Database connection is successful');},
+  err => { console.log('Error when connecting to the database'+ err);}
+);
 
+// view engine setup
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
