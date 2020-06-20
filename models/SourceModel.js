@@ -14,4 +14,8 @@ const SourceSchema = mongoose.Schema({
     timestamps: true
 });
 
+SourceSchema.pre('deleteOne', { document: true }, function (next) {
+  next();
+});
+
 module.exports = mongoose.model('Source', SourceSchema);
