@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const PodcastSchema = mongoose.Schema({
     active: {
@@ -22,8 +23,14 @@ const PodcastSchema = mongoose.Schema({
 
     sources: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Source'
+        ref: 'Source' 
     }]
+
+
+    // sources: [{
+    //     type: Schema.Types.ObjectId,
+    //     ref: "Source"
+    // }]
 }, {
     timestamps: true
 });
