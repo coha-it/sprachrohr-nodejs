@@ -22,7 +22,7 @@ const PodcastSchema = mongoose.Schema({
     duration: Number,
 
     sources: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Source' 
     }]
 
