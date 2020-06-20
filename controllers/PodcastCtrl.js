@@ -1,4 +1,5 @@
 const Podcast = require('../models/PodcastModel');
+const Source = require('../models/SourceModel');
 
 module.exports = {
 
@@ -31,7 +32,6 @@ module.exports = {
        res.send(podcast.sources);
     },
 
-
     // list : async (req, res) => {
     //   Podcast.find((err, podcasts) => {
     //     if (err) {
@@ -41,4 +41,20 @@ module.exports = {
     //     }
     //   })
     // },
+
+    httpDelete : async (req, res) => {
+        const { id } = req.params;
+        let response = {'messages': []};
+
+        if (await Source.deleteMany({podcast: id})) {
+            response.messages.push('Deleted Source');
+        }
+
+        if (await Podcast.deleteOne({_id: id})) {
+            response.messages.push('Deleted Podcast')
+        }
+
+        res.send(200).json(response);
+    }
+
 }

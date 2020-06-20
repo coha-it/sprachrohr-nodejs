@@ -6,14 +6,15 @@ var router = express.Router();
 const PodcastCtrl = require('../controllers/PodcastCtrl')
 const SourceCtrl = require('../controllers/SourceCtrl')
 
-// user routes
+// Podcast routes
 router.post('/podcast/create', PodcastCtrl.httpCreate);
 router.post('/podcast/update/:id', PodcastCtrl.httpUpdate);
 router.post('/podcast/find', PodcastCtrl.httpFind);
 router.post('/podcast/find/source/:id', PodcastCtrl.httpSourcesByPodcast);
 router.post('/podcast/list', PodcastCtrl.httpList);
+router.post('/podcast/delete/:id', PodcastCtrl.httpDelete);
 
-// post routes
+// Source routes
 router.post('/source/create/:id', SourceCtrl.httpCreate);
 router.post('/source/update/:id', SourceCtrl.httpUpdate);
 router.post('/source/populate/:id', SourceCtrl.httpPodcastBySource);

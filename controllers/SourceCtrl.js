@@ -39,19 +39,35 @@ module.exports = {
     },
 
     httpDelete : async (req, res) => {
-        // // Get Both
+        // Get Both
         const { id } = req.params
         const source = await Source.findById(id).populate('podcast'); //.sources.pull({ _id: id });
-        const podcast = await Podcast.findById(source.podcast._id)
 
-        // // Remove from Podcast
-        podcast.sources.remove(id);
-        podcast.save();
+        // Response
+        let response = { 'status': '', 'messages': [] }
 
-        // // Remove Itself
-        source.deleteOne();
+        if(source) {
+            const podcast = await Podcast.findById(source.podcast._id)
 
-        return res.status(200).json('Success delete')
+            // // Remove from Podcast
+            if(podcast) {
+                podcast.sources.remove(id);
+                podcast.save();
+                response.messages.push('Removed Source from Podcast') 
+            }
+
+            // // Remove Itself
+            if (source.deleteOne()) {
+                response.messages.push('Removed Source from Sources') 
+            }
+
+            response.status = 'success'
+            res.status(200).json(response)
+        }
+
+        response.status = 'error'
+        response.messages.push('Nothing to Delete')
+        res.status(404).json(response)
     },
 
 }
