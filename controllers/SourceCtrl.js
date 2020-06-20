@@ -8,34 +8,57 @@ module.exports = {
         await Source
                     .findById(req.params.id)
                     .updateOne(req.body.source)
-        return res.json(200, "Update Source Success")
+                    .then(success => {
+                        res.json(200, "Update Source Success")
+                    }).catch(error => {
+                        res.json(400, "Update Source Error")
+                    })
     },
 
     httpCreate : async (req, res) => {
-        podcast = req.params;
-        id = podcast.id;
-
         const { type, src } = req.body.source;
+        const podcast = req.params;
+        const id = podcast.id;
 
+        // Create Source
         const source = await Source.create({
             type,
             src,
             podcast:id
+        }).then(source => {
+            return source;
+        }).catch(() => {
+            console.log('error ');
         });
-        await source.save();
 
-        const podcastById = await Podcast.findById(id);
+        // Connect with Podcast
+        const podcastById = await Podcast
+            .findById(id)
+            .then(podcast => {
+                podcast.sources.push(source);
+                podcast.save();
+                return podcast;
+            }).catch(() => {
+                return false;
+            });
 
-        podcastById.sources.push(source);
-        await podcastById.save();
-
-        return res.send(podcastById);
+        if (podcastById) {
+            res.status(200).json(podcastById);
+        } else {
+            res.status(400).json('error - couldnt create');
+        }
     },
 
     httpPodcastBySource : async (req,res)=>{
-        const { id } = req.params;
-        const podcastBySource = await Source.findById(id).populate('Podcast');
-        res.send(podcastBySource);
+        await Source
+            .findById(req.params.id)
+            .populate('podcast')
+            .then(podcast => {
+                res.json(200, podcast);
+            })
+            .catch(err => {
+                res.json(400, err);
+            });
     },
 
     httpDelete : async (req, res) => {

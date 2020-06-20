@@ -5,19 +5,31 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
-var apiRouter = require('./routes/index');
-
+var apiRouter = require('./routes/routes');
 var app = express();
+require('dotenv').config();
 
-// Connect Mongoose Mongo DB 
+// Connect Mongoose DB
 mongoose
-.connect("mongodb://localhost:27017/podcast", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+.connect(
+  'mongodb://' + (process.env.DB_HOST || 'localhost') + 
+  ':' + (process.env.DB_PORT || 27017) + 
+  '/' + (process.env.DB_NAME) + 
+  '?authSource=' + (process.env.DB_AUTHSRC),
+  {
+    user: process.env.DB_USER,
+    pass: process.env.DB_PASS,
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }
+)
 .then(
-  () => { console.log('Database connection is successful');},
-  err => { console.log('Error when connecting to the database'+ err);}
+  () => {
+    console.log('Database connection is successful');
+  },
+  err => {
+    console.log('Error when connecting to the database ', err);
+  }
 );
 
 // view engine setup

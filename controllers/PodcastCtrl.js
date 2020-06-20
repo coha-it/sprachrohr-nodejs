@@ -7,7 +7,11 @@ module.exports = {
         await Podcast
                     .findById(req.params.id)
                     .updateOne(req.body.podcast)
-        return res.json(200, "Update Podcast Success")
+                    .then(podcast => {
+                        res.status(200).json("Update Podcast Success")
+                    }).catch(error => {
+                        res.status(400).json({'message': 'Couldnt find Podcast', 'error': error })
+                    })
     },
 
     httpCreate : async (req, res, next) =>{
@@ -17,19 +21,25 @@ module.exports = {
 
     httpFind : async (req, res) => {
         const podcast = await Podcast.find()
-        return res.send(podcast)
+        return res.json(podcast)
     },
 
     httpList : async (req, res) => {
         const podcast = await Podcast.find().populate('sources');
-        return res.send(podcast)
+        return res.json(podcast)
     },
 
     httpSourcesByPodcast : async (req, res) => {
        const { id } = req.params;
-       const podcast = await Podcast.findById(id).populate('sources');
-
-       res.send(podcast.sources);
+       
+       await Podcast
+                .findById(id)
+                .populate('sources')
+                .find(podcast => {
+                    res.status(200).json(podcast.sources);
+                }).catch(error => {
+                    res.status(400).json(error)
+                });
     },
 
     // list : async (req, res) => {
@@ -44,17 +54,22 @@ module.exports = {
 
     httpDelete : async (req, res) => {
         const { id } = req.params;
-        let response = {'messages': []};
 
-        if (await Source.deleteMany({podcast: id})) {
-            response.messages.push('Deleted Source');
-        }
+        await Source
+                .deleteMany({podcast: id})
+                .then(response => {
+                    console.log('Deleted Sources');
+                }).catch(error => {
+                    console.log('Could\'nt find Sources for Podcast');
+                });
 
-        if (await Podcast.deleteOne({_id: id})) {
-            response.messages.push('Deleted Podcast')
-        }
-
-        res.send(200).json(response);
+        await Podcast
+                .deleteOne({_id: id})
+                .then(response => {
+                    res.status(200).json('Deleted Podcast');
+                }).catch(error => {
+                    res.status(400).json('Could\'nt find Podcast');
+                });
     }
 
 }
